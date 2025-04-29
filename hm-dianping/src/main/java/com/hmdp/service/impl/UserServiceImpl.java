@@ -52,6 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result login(LoginFormDTO loginForm, HttpSession session) {
+//        new Thread(()->)
         String phone = loginForm.getPhone();
         if(RegexUtils.isPhoneInvalid(loginForm.getPhone())) {
             return Result.fail("手机号格式错误");
@@ -82,6 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = new User();
         user.setPhone(phone);
         user.setNickName("user_" + RandomUtil.randomString(10));
+        save(user);
         return user;
     }
 }

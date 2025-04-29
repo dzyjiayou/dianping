@@ -35,7 +35,7 @@ public class ShopController {
     @GetMapping("/{id}")
     public Result queryShopById(@PathVariable("id") Long id) {
         // TODO 压测1
-//        return Result.ok(shopService.getById(id)); 数据库压测
+//        return Result.ok(shopService.getById(id));
         return shopService.queryById(id);
     }
 

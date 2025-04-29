@@ -62,7 +62,10 @@ public class BlogController {
         List<Blog> records = page.getRecords();
         return Result.ok(records);
     }
-
+    @GetMapping("/{id}")
+    public Result getBlog(@PathVariable("id") Long id) {
+        return blogService.queryBlogById(id);
+    }
     @GetMapping("/hot")
     public Result queryHotBlog(@RequestParam(value = "current", defaultValue = "1") Integer current) {
         // 根据用户查询
