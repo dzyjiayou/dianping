@@ -13,4 +13,5 @@ public class Test1 {
     public void Test() throws InterruptedException {
         shopService.saveShop2Redis(1L, 10L);
     }
+
 }
