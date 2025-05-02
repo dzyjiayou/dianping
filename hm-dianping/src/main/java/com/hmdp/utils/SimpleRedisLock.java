@@ -29,7 +29,7 @@ public class SimpleRedisLock implements ILock{
     }
 
     @Override
-    public boolean tryLock(long timeoutSec) {
+     public boolean tryLock(long timeoutSec) {
         String threadId = ID_PREFIX + Thread.currentThread().getId();
         Boolean success = stringRedisTemplate.opsForValue().setIfAbsent(KEY_PREFIX + name, threadId, timeoutSec, TimeUnit.SECONDS);
         return Boolean.TRUE.equals(success);
