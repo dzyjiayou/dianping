@@ -139,10 +139,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
             return null;
         }
         Shop shop = getById(id);
-
 //        sumTimeForDB += (System.currentTimeMillis() - beginTime);
 //        System.out.println("sumTimeForDB = " + sumTimeForDB);
-
         if(shop == null) {
             stringRedisTemplate.opsForValue().set(key, "", CACHE_NULL_TTL, TimeUnit.MINUTES);
             return null;
