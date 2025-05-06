@@ -18,6 +18,7 @@ import org.springframework.aop.framework.AopContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -48,6 +49,8 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     @Resource
     private RedissonClient redissonClient;
     private IVoucherOrderService proxy;
+    @Resource
+    private KafkaTemplate kafkaTemplate;
 //    @Override //秒杀前
 //    public Result seckillVoucher(Long voucherId) {
 //        SeckillVoucher voucher = seckillVoucherService.getById(voucherId);
@@ -122,6 +125,27 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         }
     }
 
+//    @Override
+//    public Result seckillVoucher(Long voucherId) {
+//        Long userId = UserHolder.getUser().getId();
+//        Long result = stringRedisTemplate.execute(
+//                SECKILL_SCRIPT,
+//                Collections.emptyList(),
+//                voucherId.toString(), userId.toString()
+//        );
+//        int r = result.intValue();
+//        if(r != 0) {
+//            return Result.fail(r == 1 ? "库存不足" : "不能重复下单");
+//        }
+//        VoucherOrder voucherOrder = new VoucherOrder();
+//        long orderId = redisWorker.nextId("order");
+//        voucherOrder.setId(orderId);
+//        voucherOrder.setUserId(userId);
+//        voucherOrder.setVoucherId(voucherId);
+//        orderTasks.add(voucherOrder);
+//        proxy = (IVoucherOrderService)AopContext.currentProxy();
+//        return Result.ok(orderId);
+//    }
     @Override
     public Result seckillVoucher(Long voucherId) {
         Long userId = UserHolder.getUser().getId();
@@ -139,8 +163,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         voucherOrder.setId(orderId);
         voucherOrder.setUserId(userId);
         voucherOrder.setVoucherId(voucherId);
-        orderTasks.add(voucherOrder);
-        proxy = (IVoucherOrderService)AopContext.currentProxy();
+        kafkaTemplate.send("voucher-orders",  voucherOrder);
         return Result.ok(orderId);
     }
     @Transactional
